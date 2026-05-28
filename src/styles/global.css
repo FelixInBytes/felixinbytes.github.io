@@ -65,6 +65,39 @@ main {
   margin-bottom: 2rem;
 }
 
+.hero-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
+.profile-avatar-link {
+  display: block;
+  flex-shrink: 0;
+  text-decoration: none;
+  border-radius: 50%;
+  line-height: 0;
+}
+
+.profile-avatar-link:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+.profile-avatar {
+  display: block;
+  width: var(--avatar-size, 96px);
+  height: var(--avatar-size, 96px);
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  object-fit: cover;
+  background: var(--line);
+}
+
 h1,
 h2,
 h3 {
@@ -147,5 +180,14 @@ time {
 
   .post-item {
     padding: 0.95rem 0;
+  }
+
+  .hero-inner {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .hero .profile-avatar-link {
+    --avatar-size: 88px;
   }
 }

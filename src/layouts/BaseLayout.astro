@@ -1,5 +1,6 @@
 ---
 import GitHubIconLink from "../components/GitHubIconLink.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -18,12 +19,30 @@ const { title, description = "Personal blog by FelixInBytes." } = Astro.props;
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        const theme =
+          stored === "light" || stored === "dark"
+            ? stored
+            : prefersDark
+              ? "dark"
+              : "light";
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
   </head>
   <body>
     <header class="site-header">
       <div class="container header-inner">
         <a class="brand" href="/">felixinbytes</a>
-        <GitHubIconLink />
+        <div class="header-actions">
+          <ThemeToggle />
+          <GitHubIconLink />
+        </div>
       </div>
     </header>
     <main class="container">

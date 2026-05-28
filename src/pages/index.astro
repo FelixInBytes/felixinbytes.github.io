@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import ProfileAvatar from "../components/ProfileAvatar.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const posts = (await getCollection("blog"))
@@ -9,11 +10,16 @@ const posts = (await getCollection("blog"))
 
 <BaseLayout title="Felix in Bytes" description="Minimal personal blog by Felix.">
   <section class="hero">
-    <p class="eyebrow">Personal Blog</p>
-    <h1>Felix in Bytes</h1>
-    <p class="lede">
-      Notes on engineering, software, and building on the web.
-    </p>
+    <div class="hero-inner">
+      <ProfileAvatar size={104} />
+      <div class="hero-copy">
+        <p class="eyebrow">Personal Blog</p>
+        <h1>Felix in Bytes</h1>
+        <p class="lede">
+          Notes on engineering, software, and building on the web.
+        </p>
+      </div>
+    </div>
   </section>
 
   <section>

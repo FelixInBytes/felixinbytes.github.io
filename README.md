@@ -29,6 +29,25 @@ draft: false
 3. Write your markdown content below it.
 4. Commit and push to `main` to trigger deployment.
 
+## Add a GitHub project
+
+1. Add a markdown file in `src/content/projects/` (example: `my-app.md`).
+2. Include this frontmatter:
+
+```md
+---
+title: "My App" # optional, defaults to GitHub repo name
+github: "felixinbytes/my-app" # or full https://github.com/... URL
+order: 1 # optional sort order
+draft: false
+---
+```
+
+3. Write your short review as markdown below the frontmatter.
+4. At build time, repo metadata (description, language, stars, forks, last push) is fetched from the GitHub API.
+
+Optional: set `GITHUB_TOKEN` in GitHub Actions secrets for higher API rate limits during deploys.
+
 ## Build
 
 ```bash

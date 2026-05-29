@@ -1,0 +1,63 @@
+---
+import { getCollection, render } from "astro:content";
+import ProjectRefreshButton from "../../components/ProjectRefreshButton.astro";
+import ProjectRepoMeta from "../../components/ProjectRepoMeta.astro";
+import { enrichProject } from "../../lib/github";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects", ({ data }) => !data.draft);
+
+  return Promise.all(
+    projects.map(async (project) => ({
+      params: { slug: project.id },
+      props: { enriched: await enrichProject(project) },
+    })),
+  );
+}
+
+const { enriched } = Astro.props;
+const { project, repo, slug } = enriched;
+const { Content } = await render(project);
+const title = project.data.title ?? repo?.name ?? slug;
+---
+
+<BaseLayout title={`${title} — Projects`} description={repo?.description ?? undefined}>
+  <article class="prose">
+    <div class="project-box project-box--inline">
+      <ProjectRefreshButton slug={slug} />
+      <span class="project-refresh-status" data-refresh-status aria-live="polite"></span>
+
+      <p class="eyebrow">Project Review</p>
+      <h1>{title}</h1>
+      <p class="lede">
+        <a href={repo?.html_url ?? `https://github.com/${slug}`} rel="noopener noreferrer">
+          {slug}
+        </a>
+      </p>
+
+      <ProjectRepoMeta
+        slug={slug}
+        name={repo?.full_name ?? slug}
+        description={repo?.description}
+        htmlUrl={repo?.html_url}
+        homepage={repo?.homepage}
+        language={repo?.language}
+        stars={repo?.stargazers_count}
+        forks={repo?.forks_count}
+        pushedAt={repo?.pushed_at}
+        archived={repo?.archived}
+      />
+    </div>
+
+    <hr />
+    <Content />
+    <p>
+      <a href="/projects/">← All projects</a>
+    </p>
+  </article>
+
+  <script>
+    import "../../scripts/project-refresh.ts";
+  </script>
+</BaseLayout>

@@ -38,7 +38,13 @@ const { title, description = "Personal blog by FelixInBytes." } = Astro.props;
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="brand" href="/">felixinbytes</a>
+        <div class="header-start">
+          <a class="brand" href="/">felixinbytes</a>
+          <nav class="site-nav" aria-label="Main">
+            <a href="/">Blog</a>
+            <a href="/projects/">Projects</a>
+          </nav>
+        </div>
         <div class="header-actions">
           <ThemeToggle />
           <GitHubIconLink />

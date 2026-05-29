@@ -1,0 +1,84 @@
+---
+import { getCollection } from "astro:content";
+import ProjectRefreshButton from "../../components/ProjectRefreshButton.astro";
+import ProjectRepoMeta from "../../components/ProjectRepoMeta.astro";
+import { enrichProject } from "../../lib/github";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const projects = (await getCollection("projects"))
+  .filter((project) => !project.data.draft)
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+
+const enrichedProjects = await Promise.all(projects.map(enrichProject));
+
+function reviewExcerpt(body: string): string {
+  const paragraph = body.trim().split(/\n\s*\n/)[0] ?? "";
+  if (paragraph.length <= 240) return paragraph;
+  return `${paragraph.slice(0, 237)}…`;
+}
+---
+
+<BaseLayout
+  title="Projects — FelixInBytes"
+  description="GitHub projects with short reviews and live repository metadata."
+>
+  <section class="hero">
+    <p class="eyebrow">Projects</p>
+    <h1>Selected work</h1>
+    <p class="lede">
+      GitHub repositories with a short review and metadata fetched at build time.
+    </p>
+  </section>
+
+  <section>
+    <ul class="project-list">
+      {
+        enrichedProjects.map(({ project, repo, slug }) => (
+          <li class="project-item project-box">
+            <ProjectRefreshButton slug={slug} />
+            <span class="project-refresh-status" data-refresh-status aria-live="polite"></span>
+
+            <div class="project-box-body">
+              <div class="project-header">
+                <h2>
+                  <a href={`/projects/${project.id}/`} class="project-title">
+                    {project.data.title ?? repo?.name ?? slug}
+                  </a>
+                </h2>
+                <a
+                  href={repo?.html_url ?? `https://github.com/${slug}`}
+                  class="project-repo-link"
+                  rel="noopener noreferrer"
+                >
+                  {slug}
+                </a>
+              </div>
+
+              <ProjectRepoMeta
+                slug={slug}
+                name={repo?.full_name ?? slug}
+                description={repo?.description}
+                htmlUrl={repo?.html_url}
+                homepage={repo?.homepage}
+                language={repo?.language}
+                stars={repo?.stargazers_count}
+                forks={repo?.forks_count}
+                pushedAt={repo?.pushed_at}
+                archived={repo?.archived}
+              />
+
+              <p class="project-review-preview">{reviewExcerpt(project.body ?? "")}</p>
+              <p class="project-excerpt">
+                <a href={`/projects/${project.id}/`}>Read full review →</a>
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <script>
+    import "../../scripts/project-refresh.ts";
+  </script>
+</BaseLayout>

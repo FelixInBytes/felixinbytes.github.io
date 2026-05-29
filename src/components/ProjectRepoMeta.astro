@@ -1,0 +1,105 @@
+---
+interface Props {
+  slug: string;
+  name?: string;
+  description?: string | null;
+  htmlUrl?: string;
+  homepage?: string | null;
+  language?: string | null;
+  stars?: number;
+  forks?: number;
+  pushedAt?: string;
+  archived?: boolean;
+}
+
+const {
+  slug,
+  name = slug,
+  description,
+  htmlUrl = `https://github.com/${slug}`,
+  homepage,
+  language,
+  stars,
+  forks,
+  pushedAt,
+  archived = false,
+} = Astro.props;
+
+const pushedLabel = pushedAt
+  ? new Date(pushedAt).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  : null;
+---
+
+<dl class="project-meta" data-repo-meta data-slug={slug}>
+  <div class="project-meta-item project-meta-item--wide" data-meta-row="repository">
+    <dt>Repository</dt>
+    <dd data-meta-value="repository">
+      <a href={htmlUrl} rel="noopener noreferrer">{name}</a>
+    </dd>
+  </div>
+  <div
+    class:list={["project-meta-item", "project-meta-item--wide", { "is-hidden": !description }]}
+    data-meta-row="about"
+  >
+    <dt>About</dt>
+    <dd data-meta-value="about">{description}</dd>
+  </div>
+  <div
+    class:list={["project-meta-item", { "is-hidden": !language }]}
+    data-meta-row="language"
+  >
+    <dt>Language</dt>
+    <dd data-meta-value="language">{language}</dd>
+  </div>
+  <div
+    class:list={["project-meta-item", { "is-hidden": typeof stars !== "number" }]}
+    data-meta-row="stars"
+  >
+    <dt>Stars</dt>
+    <dd data-meta-value="stars">
+      {typeof stars === "number" ? stars.toLocaleString() : ""}
+    </dd>
+  </div>
+  <div
+    class:list={["project-meta-item", { "is-hidden": typeof forks !== "number" }]}
+    data-meta-row="forks"
+  >
+    <dt>Forks</dt>
+    <dd data-meta-value="forks">
+      {typeof forks === "number" ? forks.toLocaleString() : ""}
+    </dd>
+  </div>
+  <div
+    class:list={["project-meta-item", { "is-hidden": !pushedLabel }]}
+    data-meta-row="pushed"
+  >
+    <dt>Last push</dt>
+    <dd data-meta-value="pushed">{pushedLabel}</dd>
+  </div>
+  <div
+    class:list={["project-meta-item", "project-meta-item--wide", { "is-hidden": !homepage }]}
+    data-meta-row="site"
+  >
+    <dt>Site</dt>
+    <dd data-meta-value="site">
+      {
+        homepage && (
+          <a href={homepage} rel="noopener noreferrer">
+            {homepage}
+          </a>
+        )
+      }
+    </dd>
+  </div>
+  <div
+    class:list={["project-meta-item", { "is-hidden": !archived }]}
+    data-meta-row="status"
+  >
+    <dt>Status</dt>
+    <dd data-meta-value="status">{archived ? "Archived" : ""}</dd>
+  </div>
+</dl>
